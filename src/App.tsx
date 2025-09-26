@@ -1,11 +1,23 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
+import { ThemeProvider, CssBaseline } from '@mui/material'
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v7'
+import { useAppSelector } from './app/hooks'
+import { getTheme } from './utils/theme'
 
 function App() {
+  const { mode } = useAppSelector((state) => state.theme)
+  const theme = getTheme(mode)
+
   return (
-    <div>
+    <div className={mode}>
       <main>
-        <Outlet />
+        <NuqsAdapter>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Outlet />
+          </ThemeProvider>
+        </NuqsAdapter>
       </main>
     </div>
   )
