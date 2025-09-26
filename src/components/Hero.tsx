@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { FaChevronDown } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
 
 const Hero = () => {
   const name = 'Zane'
@@ -84,21 +85,32 @@ const Hero = () => {
         digital realms and protecting the innocent in the vast cyber-verse.
       </motion.p>
 
-      <motion.a
+      <motion.div
+        className="mt-12 flex flex-col items-center gap-6 sm:flex-row"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 3.8 }}
-        whileHover={{
-          scale: 1.05,
-          boxShadow: '0px 0px 15px rgba(6,182,212,0.8)',
-        }}
-        whileTap={{ scale: 0.95 }}
-        href="#about"
-        className="group relative mt-12 overflow-hidden rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 px-10 py-4 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:from-cyan-400 hover:to-purple-500"
       >
-        <span className="relative z-10">Embark on the Mission</span>
-        <span className="absolute inset-0 animate-pulse bg-white opacity-20 blur-sm transition-opacity duration-500 group-hover:opacity-0"></span>
-      </motion.a>
+        <motion.a
+          whileHover={{
+            scale: 1.05,
+            boxShadow: '0px 0px 15px rgba(6,182,212,0.8)',
+          }}
+          whileTap={{ scale: 0.95 }}
+          href="#about"
+          className="rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 px-10 py-4 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:from-cyan-400 hover:to-purple-500"
+        >
+          Embark on the Mission
+        </motion.a>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Link
+            to="/achievements"
+            className="rounded-full border-2 border-purple-400 px-10 py-4 text-lg font-bold text-purple-400 shadow-lg transition-all duration-300 hover:bg-purple-400 hover:text-slate-900"
+          >
+            View Triumphs
+          </Link>
+        </motion.div>
+      </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: -20 }}
