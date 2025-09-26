@@ -14,15 +14,16 @@ import { filterAchievements } from '../utils/achievementUtils'
 import {
   useGetAchievementsQuery,
   useAddAchievementMutation,
+  useUpdateAchievementMutation,
   useDeleteAchievementMutation,
 } from '../features/api/apiSlice'
-import type { Achievement } from '../types'
+import type { AchievementFormValues } from '../components/AchievementDialog'
 
 const Achievements = () => {
   const { mode } = useAppSelector((state) => state.theme)
   const { filters, form, handleClearFilters } = useAchievementFilters()
 
-  const [isDialogOpen, setDialogOpen] = useState(false)
+  const [isCreateDialogOpen, setCreateDialogOpen] = useState(false)
 
   const {
     data: achievements = [],
@@ -31,43 +32,34 @@ const Achievements = () => {
     isError,
   } = useGetAchievementsQuery()
   const [addAchievement, { isLoading: isAdding }] = useAddAchievementMutation()
+  const [updateAchievement] = useUpdateAchievementMutation()
   const [deleteAchievement] = useDeleteAchievementMutation()
 
   const filteredData = useMemo(
     () => filterAchievements(achievements, filters),
     [achievements, filters]
   )
+
   const tableRows = useMemo(
     () => filteredData.map((ach) => ({ ...ach, date: new Date(ach.date) })),
     [filteredData]
   )
 
-  const handleDialogSubmit = async (data: Omit<Achievement, 'id'>) => {
+  const handleCreateDialogSubmit = async (data: AchievementFormValues) => {
     const promise = addAchievement(data).unwrap()
 
     toast.promise(promise, {
       loading: 'Saving new mission...',
-      success: (newAchievement) =>
-        `Mission "${newAchievement.title}" was successfully logged!`,
+      success: (result) => `Mission "${result.title}" was successfully logged!`,
       error: 'Failed to log mission.',
     })
 
     try {
       await promise
-      setDialogOpen(false)
+      setCreateDialogOpen(false)
     } catch (err) {
       // Errors are handled by the toast.
     }
-  }
-
-  const handleDelete = (id: number) => {
-    const promise = deleteAchievement(id).unwrap()
-
-    toast.promise(promise, {
-      loading: 'Deleting mission log...',
-      success: 'Mission log deleted.',
-      error: 'Failed to delete mission log.',
-    })
   }
 
   useEffect(() => {
@@ -92,7 +84,12 @@ const Achievements = () => {
     )
   } else if (isSuccess) {
     content = (
-      <AchievementsTable rows={tableRows} mode={mode} onDelete={handleDelete} />
+      <AchievementsTable
+        rows={tableRows}
+        mode={mode}
+        updateAchievement={updateAchievement}
+        deleteAchievement={deleteAchievement}
+      />
     )
   } else if (isError) {
     content = <Alert severity="error">Failed to load achievements.</Alert>
@@ -115,14 +112,11 @@ const Achievements = () => {
               <h1 className="text-4xl font-extrabold text-cyan-400 sm:text-5xl">
                 Mission Accomplishments
               </h1>
-              <p className="mt-2 text-lg text-slate-400">
-                A log of all field operations and key developments.
-              </p>
             </div>
             <Button
               variant="contained"
               startIcon={<AddIcon />}
-              onClick={() => setDialogOpen(true)}
+              onClick={() => setCreateDialogOpen(true)}
               sx={{
                 bgcolor: 'rgb(6 182 212)',
                 '&:hover': { bgcolor: 'rgb(8 145 178)' },
@@ -142,9 +136,9 @@ const Achievements = () => {
           </Box>
         </div>
         <AchievementDialog
-          open={isDialogOpen}
-          onClose={() => setDialogOpen(false)}
-          onSubmit={handleDialogSubmit}
+          open={isCreateDialogOpen}
+          onClose={() => setCreateDialogOpen(false)}
+          onSubmit={handleCreateDialogSubmit}
           isLoading={isAdding}
         />
       </main>

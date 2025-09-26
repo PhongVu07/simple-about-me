@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Dialog,
   DialogTitle,
@@ -21,11 +21,11 @@ import { AchievementCategory } from '../types'
 const achievementSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
-  category: z.nativeEnum(AchievementCategory),
+  category: z.enum(AchievementCategory),
   date: z.date(),
 })
 
-type AchievementFormValues = z.infer<typeof achievementSchema>
+export type AchievementFormValues = z.infer<typeof achievementSchema>
 
 interface AchievementDialogProps {
   open: boolean
@@ -55,14 +55,9 @@ const AchievementDialog = ({
     },
   })
 
-  React.useEffect(() => {
-    if (open) {
-      reset({
-        title: '',
-        description: '',
-        category: AchievementCategory.Career,
-        date: new Date(),
-      })
+  useEffect(() => {
+    if (!open) {
+      reset()
     }
   }, [open, reset])
 
