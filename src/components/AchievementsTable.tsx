@@ -18,11 +18,11 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import SaveIcon from '@mui/icons-material/Save'
 import CancelIcon from '@mui/icons-material/Close'
 import { toast } from 'sonner'
-import type { Achievement } from '../types'
+import type { Achievement, AchievementTableRow } from '../types'
 import { AchievementCategory } from '../types'
 
 interface AchievementsTableProps {
-  rows: Achievement[]
+  rows: AchievementTableRow[]
   mode: 'light' | 'dark'
   updateAchievement: (achievement: Achievement) => any
   deleteAchievement: (id: number) => any
@@ -69,23 +69,33 @@ const AchievementsTable = ({
     })
   }
 
-  const processRowUpdate = async (newRow: GridRowModel<Achievement>) => {
-    const promise = updateAchievement(newRow).unwrap()
+  const processRowUpdate = async (
+    newRow: GridRowModel<AchievementTableRow>
+  ) => {
+    const achievementToUpdate: Achievement = {
+      ...newRow,
+      date: newRow.date.toISOString(),
+    }
+    const promise = updateAchievement(achievementToUpdate).unwrap()
     toast.promise(promise, {
       loading: 'Updating mission...',
       success: `Mission "${newRow.title}" updated successfully!`,
       error: 'Failed to update mission.',
     })
 
-    const updatedRow = await promise
-    return updatedRow
+    const updatedRowFromApi: Achievement = await promise
+    const updatedTableRow: AchievementTableRow = {
+      ...updatedRowFromApi,
+      date: new Date(updatedRowFromApi.date),
+    }
+    return updatedTableRow
   }
 
   const handleProcessRowUpdateError = React.useCallback((error: Error) => {
     console.error(error)
   }, [])
 
-  const columns: GridColDef<Achievement>[] = [
+  const columns: GridColDef<AchievementTableRow>[] = [
     { field: 'title', headerName: 'Title', width: 250, editable: true },
     {
       field: 'description',

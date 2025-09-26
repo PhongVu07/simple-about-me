@@ -9,5 +9,9 @@ export interface Achievement {
   title: string
   description: string
   category: AchievementCategory
+  date: string
+}
+
+export type AchievementTableRow = Omit<Achievement, 'date'> & {
   date: Date
 }

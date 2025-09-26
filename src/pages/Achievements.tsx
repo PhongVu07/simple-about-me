@@ -41,12 +41,21 @@ const Achievements = () => {
   )
 
   const tableRows = useMemo(
-    () => filteredData.map((ach) => ({ ...ach, date: new Date(ach.date) })),
+    () =>
+      filteredData.map((ach) => ({
+        ...ach,
+        date: new Date(ach.date),
+      })),
     [filteredData]
   )
 
   const handleCreateDialogSubmit = async (data: AchievementFormValues) => {
-    const promise = addAchievement(data).unwrap()
+    const achievementToSave = {
+      ...data,
+      date: data.date.toISOString(),
+    }
+
+    const promise = addAchievement(achievementToSave).unwrap()
 
     toast.promise(promise, {
       loading: 'Saving new mission...',

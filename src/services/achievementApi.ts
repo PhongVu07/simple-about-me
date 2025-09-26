@@ -1,13 +1,11 @@
 import { mockAchievements } from '../data/MOCK'
-import { type Achievement } from '../types'
+import type { Achievement } from '../types'
 
 const LOCAL_STORAGE_KEY = 'achievementsData'
 
 const getAchievementsFromStorage = (): Achievement[] => {
   const data = localStorage.getItem(LOCAL_STORAGE_KEY)
-  return data
-    ? JSON.parse(data).map((ach: any) => ({ ...ach, date: new Date(ach.date) }))
-    : []
+  return data ? JSON.parse(data) : []
 }
 
 const saveAchievementsToStorage = (achievements: Achievement[]) => {
