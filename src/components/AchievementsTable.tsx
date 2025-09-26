@@ -1,9 +1,6 @@
 import React from 'react'
 import { Box } from '@mui/material'
-import {
-  DataGrid,
-  type GridColDef,
-} from '@mui/x-data-grid'
+import { DataGrid, type GridColDef } from '@mui/x-data-grid'
 import type { Achievement } from '../types'
 
 interface AchievementsTableProps {
