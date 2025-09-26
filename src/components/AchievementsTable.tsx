@@ -1,19 +1,46 @@
 import React from 'react'
-import { Box } from '@mui/material'
-import { DataGrid, type GridColDef } from '@mui/x-data-grid'
-import type { Achievement } from '../types'
+import { Box, IconButton } from '@mui/material'
+import {
+  DataGrid,
+  type GridColDef,
+  type GridRenderCellParams,
+} from '@mui/x-data-grid'
+import DeleteIcon from '@mui/icons-material/Delete'
+import { type Achievement } from '../types'
 
 interface AchievementsTableProps {
   rows: Achievement[]
   mode: 'light' | 'dark'
+  onDelete: (id: number) => void
 }
 
-const AchievementsTable = ({ rows, mode }: AchievementsTableProps) => {
+const AchievementsTable = ({
+  rows,
+  mode,
+  onDelete,
+}: AchievementsTableProps) => {
   const columns: GridColDef<Achievement>[] = [
     { field: 'title', headerName: 'Title', width: 250 },
     { field: 'description', headerName: 'Description', flex: 1, minWidth: 300 },
     { field: 'category', headerName: 'Category', width: 150 },
     { field: 'date', headerName: 'Date', width: 180, type: 'date' },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 120,
+      sortable: false,
+      filterable: false,
+      renderCell: (params: GridRenderCellParams) => (
+        <Box>
+          <IconButton
+            onClick={() => onDelete(params.row.id)}
+            aria-label="delete"
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      ),
+    },
   ]
 
   return (
@@ -43,9 +70,7 @@ const AchievementsTable = ({ rows, mode }: AchievementsTableProps) => {
         rows={rows}
         columns={columns}
         getRowId={(row) => row.id}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 10 } },
-        }}
+        initialState={{ pagination: { paginationModel: { pageSize: 5 } } }}
         pageSizeOptions={[5, 10, 20]}
       />
     </Box>
