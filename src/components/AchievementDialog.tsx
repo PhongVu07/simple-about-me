@@ -10,12 +10,18 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Stack,
+  IconButton,
+  CircularProgress,
+  Divider,
 } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
+import CloseIcon from '@mui/icons-material/Close'
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import { AchievementCategory } from '../types'
 
 const achievementSchema = z.object({
@@ -64,77 +70,99 @@ const AchievementDialog = ({
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogTitle>Log New Mission</DialogTitle>
-        <DialogContent
+        <DialogTitle
           sx={{
             display: 'flex',
-            flexDirection: 'column',
-            gap: 3,
-            pt: '16px !important',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
-          <Controller
-            name="title"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Title"
-                error={!!errors.title}
-                helperText={errors.title?.message}
-                autoFocus
-              />
-            )}
-          />
-          <Controller
-            name="description"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Description"
-                multiline
-                rows={3}
-                error={!!errors.description}
-                helperText={errors.description?.message}
-              />
-            )}
-          />
-          <Controller
-            name="category"
-            control={control}
-            render={({ field }) => (
-              <FormControl>
-                <InputLabel>Category</InputLabel>
-                <Select {...field} label="Category">
-                  {Object.values(AchievementCategory).map((cat) => (
-                    <MenuItem key={cat} value={cat}>
-                      {cat}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
-          />
-          <Controller
-            name="date"
-            control={control}
-            render={({ field }) => (
-              <DatePicker
-                label="Date"
-                value={dayjs(field.value)}
-                onChange={(date) =>
-                  field.onChange(date ? date.toDate() : new Date())
-                }
-              />
-            )}
-          />
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <EmojiEventsIcon color="primary" />
+            <span>Log New Mission</span>
+          </Stack>
+          <IconButton onClick={onClose} aria-label="close" disabled={isLoading}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <Divider />
+
+        <DialogContent>
+          <Stack spacing={2.5} sx={{ pt: 2 }}>
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Title"
+                  error={!!errors.title}
+                  helperText={errors.title?.message}
+                  autoFocus
+                />
+              )}
+            />
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Description"
+                  multiline
+                  rows={3}
+                  error={!!errors.description}
+                  helperText={errors.description?.message}
+                />
+              )}
+            />
+            <Controller
+              name="category"
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth>
+                  <InputLabel>Category</InputLabel>
+                  <Select {...field} label="Category">
+                    {Object.values(AchievementCategory).map((cat) => (
+                      <MenuItem key={cat} value={cat}>
+                        {cat}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="date"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  label="Date"
+                  value={dayjs(field.value)}
+                  onChange={(date) =>
+                    field.onChange(date ? date.toDate() : new Date())
+                  }
+                />
+              )}
+            />
+          </Stack>
         </DialogContent>
-        <DialogActions>
+
+        <Divider />
+
+        <DialogActions sx={{ p: '16px 24px' }}>
           <Button onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
-          <Button type="submit" variant="contained" disabled={isLoading}>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={isLoading}
+            startIcon={
+              isLoading ? <CircularProgress size={20} color="inherit" /> : null
+            }
+          >
             {isLoading ? 'Saving...' : 'Save'}
           </Button>
         </DialogActions>
